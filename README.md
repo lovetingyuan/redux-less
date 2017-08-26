@@ -9,7 +9,7 @@ import getReducer from 'redux-less'
 const reducer = getReducer({
   key: 'todo',
   initialState: [],
-  getTodoList(dispatch, getState, other) { // can not omit "other" param
+  getTodoList(dispatch, getState, other) { // async reducer can not omit "other" param
     const action = () => {
       fetch('./api/todos')
         .then(res => res.json())
@@ -20,7 +20,7 @@ const reducer = getReducer({
     }
     return { action, reducer } // async reducer must return action and reducer
   },
-  addTodo(state, action) { // pure function as sync reducer
+  addTodo(state, action) { // pure function as sync reducer, owns two params
     return state.concat(action.payload)
   },
   removeTodo(state, action) {
@@ -34,8 +34,9 @@ const reducer = getReducer({
 export default connect(state => ({
   todoList: state[reducer.key]
 }), reducer.actions)(props => {
-  // ...
-  <button onClick={() => this.props.addTodo('new item')}>add</button>
+  return ( // ...
+    <button onClick={() => props.addTodo('new item')}>add</button>
+  )
 })
 
 ```
