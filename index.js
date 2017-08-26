@@ -7,7 +7,8 @@ const SPLIT = ' ^_^ '
 let _dispatch = () => {
   throw new Error('you have to apply middleware when you create the store')
 }
-const exportDispathMiddleware = ({ dispatch, getState }) => {
+
+const exportDispatchMiddleware = ({ dispatch, getState }) => {
   _dispatch = dispatch
   return next => action => {
     return next(action)
@@ -57,5 +58,5 @@ function getReducer(config) {
 export {
   ACTIONS as actions,
   getReducer as default,
-  exportDispathMiddleware
+  exportDispatchMiddleware
 }
