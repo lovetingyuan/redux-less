@@ -6,19 +6,14 @@ write a redux reducer with less code, inspired by [mirror](https://github.com/mi
 
 ```javascript
 import getReducer from 'redux-less'
+
 const reducer = getReducer({
   key: 'todo',
   initialState: [],
-  getTodoList(dispatch, getState, other) { // async reducer can not omit "other" param
-    const action = () => {
-      fetch('./api/todos')
-        .then(res => res.json())
-        .then(list => dispatch(list))
-    }
-    const reducer = (state, action) => {
-      return state.concat(action.payload)
-    }
-    return { action, reducer } // async reducer must return action and reducer
+  getTodoList(dispatch, getState, args) { // async reducer can not omit "args" param
+    fetch('./api/todos')
+      .then(res => res.json())
+      .then(list => dispatch(getState().concat(list)))
   },
   addTodo(state, action) { // pure function as sync reducer, owns two params
     return state.concat(action.payload)

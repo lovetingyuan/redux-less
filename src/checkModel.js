@@ -1,31 +1,36 @@
 import isPlainObject from 'lodash-es/isPlainObject'
 import assign from 'lodash-es/assign'
 
+const SPLIT = '/'
+
 function checkModel(model) {
-  if (!isPlainObject(model)) return new Error(`model ${model} is not a plain object`)
-  const _model = assign({}, model)
-  const { key } = _model
-  if (!key || typeof key !== 'string') {
-    return new Error(`key ${key} in model ${model} must be a valid string`)
+  if (!isPlainObject(model)) throw new Error(`model ${model} is not a plain object`)
+  const key = model.key
+  if (!key || typeof key !== 'string' || key.indexOf(SPLIT) !== -1) {
+    throw new Error(`state key:"${key}" must a string and can not contain "${SPLIT}"`)
   }
-  if (key.indexOf(SPLIT) >= 0) {
-    return new Error(`key ${key} in model ${model} can not contain '/' character`)
+  const _model = {
+    initialState: model.initialState,
+    key,
+    reducers: {}
   }
-  for (let reducerName in _model) {
-    if (_model.hasOwnProperty(reducerName) &&
-      reducerName !== 'key' &&
-      reducerName !== 'initialState'
+  for (let name in model) {
+    if (model.hasOwnProperty(name) &&
+      name !== 'initialState' &&
+      name !== 'key'
     ) {
-      const reducer = _model[reducerName]
+      const reducer = model[name]
       if (typeof reducer !== 'function') {
-        return new Error(`reducer ${reducerName} in model ${model} must be a function`)
+        throw new Error(`reducer "${name}" at "${model.key}" model must be a function`)
       }
-      if (reducer.length !== 2 || reducer.length !== 3) {
-        return new Error(`reducer ${reducerName} in model ${model} must have 2 or 3 args`)
+      if (name.indexOf(SPLIT) !== -1) {
+        throw new Error(`reducer "${name}" at "${model.key}" can not contain "${SPLIT}"`)
       }
+      _model.reducers[name] = reducer
     }
   }
   return _model
 }
 
+export { SPLIT }
 export default checkModel
