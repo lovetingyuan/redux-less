@@ -1,10 +1,15 @@
 {
   "name": "redux-less",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "write less code with redux",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "module": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prebuild": "npm run lint && rimraf lib",
+    "build:node": "babel src -d lib",
+    "build": "cross-env NODE_ENV=production&&npm run build:node && rollup --config",
+    "lint": "eslint -c package.json ./src --fix --no-eslintrc"
   },
   "repository": {
     "type": "git",
@@ -24,7 +29,48 @@
   "peerDependencies": {
     "redux": "^3.7.2"
   },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-preset-env": "^1.6.0",
+    "babili": "^0.1.4",
+    "cross-env": "^5.0.5",
+    "eslint": "3.19.0",
+    "eslint-config-airbnb": "^15.0.1",
+    "eslint-plugin-import": "2.2.0",
+    "eslint-plugin-jsx-a11y": "5.0.1",
+    "eslint-plugin-react": "7.0.1",
+    "rimraf": "^2.6.1",
+    "rollup": "^0.49.1",
+    "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-node-resolve": "^3.0.0"
+  },
   "dependencies": {
     "lodash-es": "^4.17.4"
-  }
+  },
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "modules": false
+        }
+      ]
+    ]
+  },
+  "eslintConfig": {
+    "extends": "airbnb",
+    "env": {
+      "es6": true,
+      "browser": true,
+      "node": true
+    },
+    "rules": {
+      "no-plusplus": "off",
+      "no-underscore-dangle": "off",
+      "consistent-return": "off",
+      "comma-dangle": "off"
+    }
+  },
+  "eslintIgnore": ["dist/*", "lib/*", "rollup.config.js"]
 }

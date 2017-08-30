@@ -1,24 +1,18 @@
-let _dispatch = () => {
-  throw new Error('you have to apply middleware when you create the store')
-}
-let _getState = () => {
-  throw new Error('you have to apply middleware when you create the store')
+import { ASYNC_ACTION_TYPE } from './constants';
+
+function warning() {
+  throw new Error('you have to apply middleware when you create the store');
 }
 
-const reduxLessMiddleware = ({ dispatch, getState }) => {
-  _dispatch = dispatch
-  _getState = getState
-  return next => action => {
-    if (typeof action === 'function') {
-      return action(dispatch, getState);
+export let dispatch = warning; // eslint-disable-line import/no-mutable-exports
+export let getState = warning; // eslint-disable-line import/no-mutable-exports
+
+export default function reduxLessMiddleware({ dispatch: a, getState: b }) {
+  dispatch = a;
+  getState = b;
+  return next => (action) => {
+    if (action && action.type !== ASYNC_ACTION_TYPE) {
+      return next(action);
     }
-    return next(action)
-  }
+  };
 }
-export function getDispatch() {
-  return {
-    dispath: _dispatch,
-    getState: _getState
-  }
-}
-export default reduxLessMiddleware
