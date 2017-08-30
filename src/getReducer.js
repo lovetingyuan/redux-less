@@ -44,7 +44,7 @@ function getReducer(model) {
           (key = stateKey) => getState()[key],
           args
         );
-        return { type: ASYNC_ACTION_TYPE };
+        return ASYNC_ACTION_TYPE;
       };
     }
   });

@@ -1,24 +1,13 @@
-'use strict';
+import isPlainObject from 'lodash-es/isPlainObject';
+import { dispatch, getState } from './middleware';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _isPlainObject = require('lodash-es/isPlainObject');
-
-var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
-
-var _middleware = require('./middleware');
-
-var _constants = require('./constants');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+import { SPLIT, ASYNC_ACTION_TYPE } from './constants';
 
 function checkModel(model) {
-  if (!(0, _isPlainObject2.default)(model)) throw new Error('model ' + model + ' is not a plain object');
+  if (!isPlainObject(model)) throw new Error('model ' + model + ' is not a plain object');
   var key = model.key;
-  if (!key || typeof key !== 'string' || key.indexOf(_constants.SPLIT) !== -1) {
-    throw new Error('state key:"' + key + '" must a string and can not contain "' + _constants.SPLIT + '"');
+  if (!key || typeof key !== 'string' || key.indexOf(SPLIT) !== -1) {
+    throw new Error('state key:"' + key + '" must a string and can not contain "' + SPLIT + '"');
   }
   var _model = {
     initialState: model.initialState,
@@ -34,8 +23,8 @@ function checkModel(model) {
     if (typeof reducer !== 'function') {
       throw new Error('reducer "' + name + '" at "' + model.key + '" model must be a function');
     }
-    if (name.indexOf(_constants.SPLIT) !== -1) {
-      throw new Error('reducer "' + name + '" at "' + model.key + '" can not contain "' + _constants.SPLIT + '"');
+    if (name.indexOf(SPLIT) !== -1) {
+      throw new Error('reducer "' + name + '" at "' + model.key + '" can not contain "' + SPLIT + '"');
     }
     _model.reducers[name] = reducer;
   }
@@ -50,7 +39,7 @@ function getReducer(model) {
 
   var actions = {};
   Object.keys(reducers).forEach(function (actionName) {
-    var type = stateKey + _constants.SPLIT + actionName;
+    var type = stateKey + SPLIT + actionName;
     if (model[actionName].length <= 2) {
       // support Flux Standard Action
       actions[actionName] = function (payload, error, meta) {
@@ -63,12 +52,12 @@ function getReducer(model) {
         }
 
         model[actionName](function (payload, error, meta) {
-          return (0, _middleware.dispatch)({ type: type, payload: payload, error: error, meta: meta });
+          return dispatch({ type: type, payload: payload, error: error, meta: meta });
         }, function () {
           var key = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : stateKey;
-          return (0, _middleware.getState)()[key];
+          return getState()[key];
         }, args);
-        return _constants.ASYNC_ACTION_TYPE;
+        return ASYNC_ACTION_TYPE;
       };
     }
   });
@@ -76,7 +65,7 @@ function getReducer(model) {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
     var action = arguments[1];
 
-    var handlerName = action.type.split(_constants.SPLIT)[1];
+    var handlerName = action.type.split(SPLIT)[1];
     if (!(handlerName in model)) return state;
     var reducerFunc = model[handlerName];
     if (reducerFunc.length > 2) return action.payload;
@@ -87,4 +76,4 @@ function getReducer(model) {
   return reducer;
 }
 
-exports.default = getReducer;
+export default getReducer;

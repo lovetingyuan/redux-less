@@ -1,15 +1,16 @@
 {
   "name": "redux-less",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "write less code with redux",
   "main": "lib/index.js",
-  "module": "src/index.js",
+  "module": "es/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prebuild": "npm run lint && rimraf lib",
+    "prebuild": "npm run lint && rimraf lib es dist",
     "build:node": "cross-env BABEL_ENV=node babel src -d lib",
-    "build:rollup": "cross-env BABEL_ENV=rollup rollup --config",
-    "build": "cross-env NODE_ENV=production npm run build:node&&npm run build:rollup",
+    "build:es": "cross-env BABEL_ENV=es babel src -d es",
+    "build:rollup": "cross-env BABEL_ENV=es rollup --config",
+    "build": "cross-env NODE_ENV=production npm run build:node&&npm run build:es&&npm run build:rollup",
     "lint": "eslint ./src --fix"
   },
   "repository": {
@@ -46,5 +47,10 @@
   },
   "dependencies": {
     "lodash-es": "^4.17.4"
-  }
+  },
+  "files": [
+    "dist",
+    "es",
+    "lib"
+  ]
 }

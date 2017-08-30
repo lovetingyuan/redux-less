@@ -206,7 +206,9 @@ function isPlainObject(value) {
 }
 
 var SPLIT = '/';
-var ASYNC_ACTION_TYPE = '@@LESS/ASYNC_ACTION_TYPE';
+var ASYNC_ACTION_TYPE = {
+  type: '@@LESS/ASYNC_ACTION_TYPE'
+};
 
 function warning() {
   throw new Error('you have to apply middleware when you create the store');
@@ -284,7 +286,7 @@ function getReducer(model) {
           var key = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : stateKey;
           return getState()[key];
         }, args);
-        return { type: ASYNC_ACTION_TYPE };
+        return ASYNC_ACTION_TYPE;
       };
     }
   });
