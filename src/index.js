@@ -1,7 +1,7 @@
 import getReducer from './getReducer';
 import reduxLessMiddleware from './middleware';
 
-export default {
+export {
   reduxLessMiddleware,
   getReducer
 };

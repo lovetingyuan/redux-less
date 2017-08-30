@@ -1,8 +1,8 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	(global.ReduxLess = factory());
-}(this, (function () { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+	typeof define === 'function' && define.amd ? define(['exports'], factory) :
+	(factory((global.ReduxLess = {})));
+}(this, (function (exports) { 'use strict';
 
 /** Detect free variable `global` from Node.js. */
 var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
@@ -303,12 +303,10 @@ function getReducer(model) {
   return reducer;
 }
 
-var index = {
-  reduxLessMiddleware: reduxLessMiddleware,
-  getReducer: getReducer
-};
+exports.reduxLessMiddleware = reduxLessMiddleware;
+exports.getReducer = getReducer;
 
-return index;
+Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
 //# sourceMappingURL=reduxLess.js.map
