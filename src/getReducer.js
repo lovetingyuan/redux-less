@@ -35,11 +35,11 @@ function getReducer(model) {
   Object.keys(reducers).forEach((actionName) => {
     const type = stateKey + SPLIT + actionName;
     if (model[actionName].length <= 2) {
-      actions[actionName] = payload => ({ type, payload });
+      // support Flux Standard Action
+      actions[actionName] = (payload, error, meta) => ({ type, payload, error, meta });
     } else {
       actions[actionName] = (...args) => {
         model[actionName](
-          // support Flux Standard Action
           (payload, error, meta) => dispatch({ type, payload, error, meta }),
           (key = stateKey) => getState()[key],
           args

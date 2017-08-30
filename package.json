@@ -1,15 +1,16 @@
 {
   "name": "redux-less",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "write less code with redux",
   "main": "lib/index.js",
   "module": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prebuild": "npm run lint && rimraf lib",
-    "build:node": "babel src -d lib",
-    "build": "cross-env NODE_ENV=production&&npm run build:node && rollup --config",
-    "lint": "eslint -c package.json ./src --fix --no-eslintrc"
+    "build:node": "cross-env BABEL_ENV=node babel src -d lib",
+    "build:rollup": "cross-env BABEL_ENV=rollup rollup --config",
+    "build": "cross-env NODE_ENV=production npm run build:node&&npm run build:rollup",
+    "lint": "eslint ./src --fix"
   },
   "repository": {
     "type": "git",
@@ -26,9 +27,6 @@
     "url": "https://github.com/lovetingyuan/redux-less/issues"
   },
   "homepage": "https://github.com/lovetingyuan/redux-less#readme",
-  "peerDependencies": {
-    "redux": "^3.7.2"
-  },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-plugin-external-helpers": "^6.22.0",
@@ -48,34 +46,5 @@
   },
   "dependencies": {
     "lodash-es": "^4.17.4"
-  },
-  "babel": {
-    "presets": [
-      [
-        "env",
-        {
-          "modules": false
-        }
-      ]
-    ]
-  },
-  "eslintConfig": {
-    "extends": "airbnb",
-    "env": {
-      "es6": true,
-      "browser": true,
-      "node": true
-    },
-    "rules": {
-      "no-plusplus": "off",
-      "no-underscore-dangle": "off",
-      "consistent-return": "off",
-      "comma-dangle": "off"
-    }
-  },
-  "eslintIgnore": [
-    "dist/*",
-    "lib/*",
-    "rollup.config.js"
-  ]
+  }
 }

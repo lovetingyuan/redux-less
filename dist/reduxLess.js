@@ -268,8 +268,9 @@ function getReducer(model) {
   Object.keys(reducers).forEach(function (actionName) {
     var type = stateKey + SPLIT + actionName;
     if (model[actionName].length <= 2) {
-      actions[actionName] = function (payload) {
-        return { type: type, payload: payload };
+      // support Flux Standard Action
+      actions[actionName] = function (payload, error, meta) {
+        return { type: type, payload: payload, error: error, meta: meta };
       };
     } else {
       actions[actionName] = function () {
@@ -277,9 +278,7 @@ function getReducer(model) {
           args[_key] = arguments[_key];
         }
 
-        model[actionName](
-        // support Flux Standard Action
-        function (payload, error, meta) {
+        model[actionName](function (payload, error, meta) {
           return dispatch({ type: type, payload: payload, error: error, meta: meta });
         }, function () {
           var key = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : stateKey;

@@ -1,0 +1,21 @@
+{
+  "env": {
+    "rollup": {
+      "presets": [
+        [
+          "env",
+          {
+            "modules": false
+          }
+        ]
+      ]
+    },
+    "node": {
+      "presets": [
+        [
+          "env"
+        ]
+      ]
+    }
+  }
+}
