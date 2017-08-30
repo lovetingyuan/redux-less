@@ -5,9 +5,17 @@ write a redux reducer with less code, inspired by [mirror](https://github.com/mi
 ### example
 
 ```javascript
-import getReducer from 'redux-less'
-
-const reducer = getReducer({
+import { getReducer, reduxLessMiddleware } from 'redux-less';
+import { applyMiddleware, createStore } from 'redux'
+const store = createStore(
+  rootReducer,
+  initialState,
+  // you must apply "reduxLessMiddleware" to your store
+  applyMiddleware(reduxLessMiddleware, ...otherMiddlewares),
+)
+// ...
+// you can use "store.replaceReducer" and "combineReducers" to apply this reducer
+const reducer = getReducer({ 
   key: 'todo',
   initialState: [],
   getTodoList(dispatch, getState, args) { // async reducer can not omit "args" param
@@ -32,7 +40,7 @@ export default connect(state => ({
   todoList: state[reducer.key] // reducer.key == "todo"
 }), reducer.actions)(props => { // reducer.actions is an actionCreators map
   return ( 
-    <div> 
+    <div>
       {/* ... */}
       <button onClick={() => props.addTodo('new item')}>add</button>
     </div>
