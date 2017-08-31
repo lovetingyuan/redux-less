@@ -15,7 +15,7 @@ const store = createStore(
 )
 // ...
 // you can use "store.replaceReducer" and "combineReducers" to apply this reducer
-const reducer = getReducer({ 
+const reducer = getReducer({
   key: 'todo',
   initialState: [],
   getTodoList(dispatch, getState, args) { // async reducer can not omit "args" param
@@ -39,7 +39,7 @@ const reducer = getReducer({
 export default connect(state => ({
   todoList: state[reducer.key] // reducer.key == "todo"
 }), reducer.actions)(props => { // reducer.actions is an actionCreators map
-  return ( 
+  return (
     <div>
       {/* ... */}
       <button onClick={() => props.addTodo('new item')}>add</button>
@@ -48,6 +48,8 @@ export default connect(state => ({
 })
 
 ```
+
+[online example](https://jsfiddle.net/tingyuan/q0ehjo2r/)
 
 ### license
 MIT

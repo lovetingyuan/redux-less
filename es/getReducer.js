@@ -1,6 +1,6 @@
 import isPlainObject from 'lodash-es/isPlainObject';
+import filter from 'lodash-es/filter';
 import { dispatch, getState } from './middleware';
-
 import { SPLIT, ASYNC_ACTION_TYPE } from './constants';
 
 function checkModel(model) {
@@ -14,7 +14,7 @@ function checkModel(model) {
     key: key,
     reducers: {}
   };
-  var reducersName = Object.keys(model).filter(function (v) {
+  var reducersName = filter(Object.keys(model), function (v) {
     return v !== 'initialState' && v !== 'key';
   });
   for (var i = 0; i < reducersName.length; i++) {

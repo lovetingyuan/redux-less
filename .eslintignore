@@ -1,3 +1,4 @@
 dist/*
 lib/*
 rollup.config.js
+es/*

@@ -3,14 +3,14 @@ import resolve from 'rollup-plugin-node-resolve';
 import replace from 'rollup-plugin-replace';
 
 module.exports = {
-  entry: './src/index.js',
+  input: './src/index.js',
   output: {
-    exports: 'named'
+    exports: 'named',
+    file: './dist/ReduxLess.js',
+    format: 'umd',
   },
-  dest: './dist/reduxLess.js',
-  format: 'umd',
   name: 'ReduxLess',
-  sourceMap: true,
+  sourcemap: true,
   plugins: [
     resolve(),
     babel({
