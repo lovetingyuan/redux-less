@@ -2,7 +2,6 @@ import isPlainObject from 'lodash-es/isPlainObject';
 import filter from 'lodash-es/filter';
 import { dispatch, getState } from './middleware';
 import { SPLIT, ASYNC_ACTION_TYPE } from './constants';
-import Action from './action';
 
 // eslint-disable-next-line no-console
 const logError = typeof console === 'object' ? console.error : () => {};
@@ -43,26 +42,31 @@ function checkModel(model) {
   return _model;
 }
 
+function getActionType(stateKey, actionName) {
+  if (!stateKey || typeof stateKey !== 'string') {
+    const error = new Error('you must specify the reducer key');
+    logError(error); // eslint-disable-line no-console
+    throw error;
+  }
+  if (!actionName || typeof stateKey !== 'string') {
+    return _actionName => stateKey + SPLIT + _actionName;
+  }
+  return stateKey + SPLIT + actionName;
+}
+
 function getReducer(model) {
   const { key: stateKey, initialState, reducers } = checkModel(model);
   const actions = {};
+  const _getState = (key = stateKey) => getState()[key];
   Object.keys(reducers).forEach((actionName) => {
+    const type = getActionType(stateKey, actionName);
+    const actionDispatcher = (payload, error, meta) => dispatch({ type, payload, error, meta });
     if (model[actionName].length <= 2) {
       // support Flux Standard Action
-      actions[actionName] = (payload, error, meta) => {
-        const action = new Action(stateKey, actionName, payload, error, meta);
-        return dispatch(action);
-      };
+      actions[actionName] = actionDispatcher;
     } else {
       actions[actionName] = (...args) => {
-        model[actionName](
-          (payload, error, meta) => {
-            const action = new Action(stateKey, actionName, payload, error, meta);
-            return dispatch(action);
-          },
-          (key = stateKey) => getState()[key],
-          args
-        );
+        model[actionName].call(model, actionDispatcher, _getState, args);
         return ASYNC_ACTION_TYPE;
       };
     }
@@ -79,4 +83,7 @@ function getReducer(model) {
   return reducer;
 }
 
+export {
+  getActionType
+};
 export default getReducer;

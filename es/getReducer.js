@@ -4,7 +4,6 @@ import isPlainObject from 'lodash-es/isPlainObject';
 import filter from 'lodash-es/filter';
 import { dispatch, getState } from './middleware';
 import { SPLIT, ASYNC_ACTION_TYPE } from './constants';
-import Action from './action';
 
 // eslint-disable-next-line no-console
 var logError = (typeof console === 'undefined' ? 'undefined' : _typeof(console)) === 'object' ? console.error : function () {};
@@ -47,6 +46,20 @@ function checkModel(model) {
   return _model;
 }
 
+function getActionType(stateKey, actionName) {
+  if (!stateKey || typeof stateKey !== 'string') {
+    var error = new Error('you must specify the reducer key');
+    logError(error); // eslint-disable-line no-console
+    throw error;
+  }
+  if (!actionName || typeof stateKey !== 'string') {
+    return function (_actionName) {
+      return stateKey + SPLIT + _actionName;
+    };
+  }
+  return stateKey + SPLIT + actionName;
+}
+
 function getReducer(model) {
   var _checkModel = checkModel(model),
       stateKey = _checkModel.key,
@@ -54,26 +67,25 @@ function getReducer(model) {
       reducers = _checkModel.reducers;
 
   var actions = {};
+  var _getState = function _getState() {
+    var key = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : stateKey;
+    return getState()[key];
+  };
   Object.keys(reducers).forEach(function (actionName) {
+    var type = getActionType(stateKey, actionName);
+    var actionDispatcher = function actionDispatcher(payload, error, meta) {
+      return dispatch({ type: type, payload: payload, error: error, meta: meta });
+    };
     if (model[actionName].length <= 2) {
       // support Flux Standard Action
-      actions[actionName] = function (payload, error, meta) {
-        var action = new Action(stateKey, actionName, payload, error, meta);
-        return dispatch(action);
-      };
+      actions[actionName] = actionDispatcher;
     } else {
       actions[actionName] = function () {
         for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
           args[_key] = arguments[_key];
         }
 
-        model[actionName](function (payload, error, meta) {
-          var action = new Action(stateKey, actionName, payload, error, meta);
-          return dispatch(action);
-        }, function () {
-          var key = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : stateKey;
-          return getState()[key];
-        }, args);
+        model[actionName].call(model, actionDispatcher, _getState, args);
         return ASYNC_ACTION_TYPE;
       };
     }
@@ -93,4 +105,5 @@ function getReducer(model) {
   return reducer;
 }
 
+export { getActionType };
 export default getReducer;

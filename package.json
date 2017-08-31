@@ -1,11 +1,12 @@
 {
   "name": "redux-less",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "write less code with redux",
   "main": "lib/index.js",
   "module": "es/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublish": "npm run build",
     "prebuild": "npm run lint && rimraf lib es dist",
     "build:node": "cross-env BABEL_ENV=node babel src -d lib",
     "build:es": "cross-env BABEL_ENV=es babel src -d es",

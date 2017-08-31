@@ -10,7 +10,7 @@ module.exports = {
     format: 'umd',
   },
   name: 'ReduxLess',
-  sourcemap: true,
+  sourcemap: false,
   plugins: [
     resolve(),
     babel({

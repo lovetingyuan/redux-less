@@ -2867,30 +2867,6 @@ function reduxLessMiddlewareWithListener() {
 
 var reduxLessMiddleware = reduxLessMiddlewareWithListener();
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Action = function () {
-  function Action(key, actionName, payload, error, meta) {
-    _classCallCheck(this, Action);
-
-    this.type = key + SPLIT + actionName;
-    this.payload = payload;
-    this.error = error;
-    this.meta = meta;
-  }
-
-  _createClass(Action, [{
-    key: 'matchType',
-    value: function matchType(key, actionName) {
-      return key + SPLIT + actionName === this.type;
-    }
-  }]);
-
-  return Action;
-}();
-
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 // eslint-disable-next-line no-console
@@ -2934,6 +2910,20 @@ function checkModel(model) {
   return _model;
 }
 
+function getActionType(stateKey, actionName) {
+  if (!stateKey || typeof stateKey !== 'string') {
+    var error = new Error('you must specify the reducer key');
+    logError(error); // eslint-disable-line no-console
+    throw error;
+  }
+  if (!actionName || typeof stateKey !== 'string') {
+    return function (_actionName) {
+      return stateKey + SPLIT + _actionName;
+    };
+  }
+  return stateKey + SPLIT + actionName;
+}
+
 function getReducer(model) {
   var _checkModel = checkModel(model),
       stateKey = _checkModel.key,
@@ -2941,26 +2931,25 @@ function getReducer(model) {
       reducers = _checkModel.reducers;
 
   var actions = {};
+  var _getState = function _getState() {
+    var key = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : stateKey;
+    return getState()[key];
+  };
   Object.keys(reducers).forEach(function (actionName) {
+    var type = getActionType(stateKey, actionName);
+    var actionDispatcher = function actionDispatcher(payload, error, meta) {
+      return dispatch({ type: type, payload: payload, error: error, meta: meta });
+    };
     if (model[actionName].length <= 2) {
       // support Flux Standard Action
-      actions[actionName] = function (payload, error, meta) {
-        var action = new Action(stateKey, actionName, payload, error, meta);
-        return dispatch(action);
-      };
+      actions[actionName] = actionDispatcher;
     } else {
       actions[actionName] = function () {
         for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
           args[_key] = arguments[_key];
         }
 
-        model[actionName](function (payload, error, meta) {
-          var action = new Action(stateKey, actionName, payload, error, meta);
-          return dispatch(action);
-        }, function () {
-          var key = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : stateKey;
-          return getState()[key];
-        }, args);
+        model[actionName].call(model, actionDispatcher, _getState, args);
         return ASYNC_ACTION_TYPE;
       };
     }
@@ -2983,8 +2972,8 @@ function getReducer(model) {
 exports.reduxLessMiddleware = reduxLessMiddleware;
 exports.reduxLessMiddlewareWithListener = reduxLessMiddlewareWithListener;
 exports.getReducer = getReducer;
+exports.getActionType = getActionType;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
-//# sourceMappingURL=ReduxLess.js.map
