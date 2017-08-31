@@ -37,8 +37,8 @@ const reducer = getReducer({
 
 // for react-redux, binding to container
 export default connect(state => ({
-  todoList: state[reducer.key] // reducer.key == "todo"
-}), reducer.actions)(props => { // reducer.actions is an actionCreators map
+  todoList: state[reducer.key], // reducer.key == "todo"
+}), () => reducer.actions)(props => { // reducer.actions is an actionCreators map
   return (
     <div>
       {/* ... */}

@@ -1,4 +1,4 @@
 import getReducer from './getReducer';
-import reduxLessMiddleware from './middleware';
+import reduxLessMiddleware, { reduxLessMiddlewareWithListener } from './middleware';
 
-export { reduxLessMiddleware, getReducer };
+export { reduxLessMiddleware, reduxLessMiddlewareWithListener, getReducer };

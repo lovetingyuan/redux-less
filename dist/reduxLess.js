@@ -14,7 +14,7 @@ var freeSelf = typeof self == 'object' && self && self.Object === Object && self
 var root$1 = freeGlobal || freeSelf || Function('return this')();
 
 /** Built-in value references. */
-var Symbol = root$1.Symbol;
+var Symbol$1 = root$1.Symbol;
 
 /** Used for built-in method references. */
 var objectProto$1 = Object.prototype;
@@ -30,7 +30,7 @@ var hasOwnProperty$1 = objectProto$1.hasOwnProperty;
 var nativeObjectToString = objectProto$1.toString;
 
 /** Built-in value references. */
-var symToStringTag$1 = Symbol ? Symbol.toStringTag : undefined;
+var symToStringTag$1 = Symbol$1 ? Symbol$1.toStringTag : undefined;
 
 /**
  * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
@@ -85,7 +85,7 @@ var nullTag = '[object Null]';
 var undefinedTag = '[object Undefined]';
 
 /** Built-in value references. */
-var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+var symToStringTag = Symbol$1 ? Symbol$1.toStringTag : undefined;
 
 /**
  * The base implementation of `getTag` without fallbacks for buggy environments.
@@ -1717,7 +1717,7 @@ var arrayBufferTag$1 = '[object ArrayBuffer]';
 var dataViewTag$1 = '[object DataView]';
 
 /** Used to convert symbols to primitives and strings. */
-var symbolProto = Symbol ? Symbol.prototype : undefined;
+var symbolProto = Symbol$1 ? Symbol$1.prototype : undefined;
 var symbolValueOf = symbolProto ? symbolProto.valueOf : undefined;
 
 /**
@@ -2460,7 +2460,7 @@ function arrayMap(array, iteratee) {
 var INFINITY = 1 / 0;
 
 /** Used to convert symbols to primitives and strings. */
-var symbolProto$1 = Symbol ? Symbol.prototype : undefined;
+var symbolProto$1 = Symbol$1 ? Symbol$1.prototype : undefined;
 var symbolToString = symbolProto$1 ? symbolProto$1.toString : undefined;
 
 /**
@@ -2867,11 +2867,46 @@ function reduxLessMiddlewareWithListener() {
 
 var reduxLessMiddleware = reduxLessMiddlewareWithListener();
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Action = function () {
+  function Action(key, actionName, payload, error, meta) {
+    _classCallCheck(this, Action);
+
+    this.type = key + SPLIT + actionName;
+    this.payload = payload;
+    this.error = error;
+    this.meta = meta;
+  }
+
+  _createClass(Action, [{
+    key: 'matchType',
+    value: function matchType(key, actionName) {
+      return key + SPLIT + actionName === this.type;
+    }
+  }]);
+
+  return Action;
+}();
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+// eslint-disable-next-line no-console
+var logError = (typeof console === 'undefined' ? 'undefined' : _typeof(console)) === 'object' ? console.error : function () {};
+
 function checkModel(model) {
-  if (!isPlainObject(model)) throw new Error('model ' + model + ' is not a plain object');
+  if (!isPlainObject(model)) {
+    var error = new Error('model ' + model + ' is not a plain object');
+    logError(error);
+    throw error;
+  }
   var key = model.key;
   if (!key || typeof key !== 'string' || key.indexOf(SPLIT) !== -1) {
-    throw new Error('state key:"' + key + '" must a string and can not contain "' + SPLIT + '"');
+    var _error = new Error('state key:"' + key + '" must be a string and can not contain "' + SPLIT + '"');
+    logError(_error); // eslint-disable-line no-console
+    throw _error;
   }
   var _model = {
     initialState: model.initialState,
@@ -2885,10 +2920,14 @@ function checkModel(model) {
     var name = reducersName[i];
     var reducer = model[name];
     if (typeof reducer !== 'function') {
-      throw new Error('reducer "' + name + '" at "' + model.key + '" model must be a function');
+      var _error2 = new Error('reducer "' + name + '" at "' + model.key + '" model must be a function');
+      logError(_error2); // eslint-disable-line no-console
+      throw _error2;
     }
     if (name.indexOf(SPLIT) !== -1) {
-      throw new Error('reducer "' + name + '" at "' + model.key + '" can not contain "' + SPLIT + '"');
+      var _error3 = new Error('reducer "' + name + '" at "' + model.key + '" can not contain "' + SPLIT + '"');
+      logError(_error3); // eslint-disable-line no-console
+      throw _error3;
     }
     _model.reducers[name] = reducer;
   }
@@ -2903,11 +2942,11 @@ function getReducer(model) {
 
   var actions = {};
   Object.keys(reducers).forEach(function (actionName) {
-    var type = stateKey + SPLIT + actionName;
     if (model[actionName].length <= 2) {
       // support Flux Standard Action
       actions[actionName] = function (payload, error, meta) {
-        return dispatch({ type: type, payload: payload, error: error, meta: meta });
+        var action = new Action(stateKey, actionName, payload, error, meta);
+        return dispatch(action);
       };
     } else {
       actions[actionName] = function () {
@@ -2916,7 +2955,8 @@ function getReducer(model) {
         }
 
         model[actionName](function (payload, error, meta) {
-          return dispatch({ type: type, payload: payload, error: error, meta: meta });
+          var action = new Action(stateKey, actionName, payload, error, meta);
+          return dispatch(action);
         }, function () {
           var key = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : stateKey;
           return getState()[key];
@@ -2941,6 +2981,7 @@ function getReducer(model) {
 }
 
 exports.reduxLessMiddleware = reduxLessMiddleware;
+exports.reduxLessMiddlewareWithListener = reduxLessMiddlewareWithListener;
 exports.getReducer = getReducer;
 
 Object.defineProperty(exports, '__esModule', { value: true });

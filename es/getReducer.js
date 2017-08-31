@@ -1,13 +1,25 @@
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 import isPlainObject from 'lodash-es/isPlainObject';
 import filter from 'lodash-es/filter';
 import { dispatch, getState } from './middleware';
 import { SPLIT, ASYNC_ACTION_TYPE } from './constants';
+import Action from './action';
+
+// eslint-disable-next-line no-console
+var logError = (typeof console === 'undefined' ? 'undefined' : _typeof(console)) === 'object' ? console.error : function () {};
 
 function checkModel(model) {
-  if (!isPlainObject(model)) throw new Error('model ' + model + ' is not a plain object');
+  if (!isPlainObject(model)) {
+    var error = new Error('model ' + model + ' is not a plain object');
+    logError(error);
+    throw error;
+  }
   var key = model.key;
   if (!key || typeof key !== 'string' || key.indexOf(SPLIT) !== -1) {
-    throw new Error('state key:"' + key + '" must a string and can not contain "' + SPLIT + '"');
+    var _error = new Error('state key:"' + key + '" must be a string and can not contain "' + SPLIT + '"');
+    logError(_error); // eslint-disable-line no-console
+    throw _error;
   }
   var _model = {
     initialState: model.initialState,
@@ -21,10 +33,14 @@ function checkModel(model) {
     var name = reducersName[i];
     var reducer = model[name];
     if (typeof reducer !== 'function') {
-      throw new Error('reducer "' + name + '" at "' + model.key + '" model must be a function');
+      var _error2 = new Error('reducer "' + name + '" at "' + model.key + '" model must be a function');
+      logError(_error2); // eslint-disable-line no-console
+      throw _error2;
     }
     if (name.indexOf(SPLIT) !== -1) {
-      throw new Error('reducer "' + name + '" at "' + model.key + '" can not contain "' + SPLIT + '"');
+      var _error3 = new Error('reducer "' + name + '" at "' + model.key + '" can not contain "' + SPLIT + '"');
+      logError(_error3); // eslint-disable-line no-console
+      throw _error3;
     }
     _model.reducers[name] = reducer;
   }
@@ -39,11 +55,11 @@ function getReducer(model) {
 
   var actions = {};
   Object.keys(reducers).forEach(function (actionName) {
-    var type = stateKey + SPLIT + actionName;
     if (model[actionName].length <= 2) {
       // support Flux Standard Action
       actions[actionName] = function (payload, error, meta) {
-        return dispatch({ type: type, payload: payload, error: error, meta: meta });
+        var action = new Action(stateKey, actionName, payload, error, meta);
+        return dispatch(action);
       };
     } else {
       actions[actionName] = function () {
@@ -52,7 +68,8 @@ function getReducer(model) {
         }
 
         model[actionName](function (payload, error, meta) {
-          return dispatch({ type: type, payload: payload, error: error, meta: meta });
+          var action = new Action(stateKey, actionName, payload, error, meta);
+          return dispatch(action);
         }, function () {
           var key = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : stateKey;
           return getState()[key];
