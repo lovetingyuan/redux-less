@@ -7,19 +7,13 @@ function warning() {
 export let dispatch = warning; // eslint-disable-line import/no-mutable-exports
 export let getState = warning; // eslint-disable-line import/no-mutable-exports
 
-export function reduxLessMiddlewareWithListener(listener) {
-  const hasListener = typeof listener === 'function';
+export function reduxLessMiddlewareWithListener(listener = () => true) {
   return ({ dispatch: a, getState: b }) => {
     dispatch = a;
     getState = b;
     return next => (action) => {
       if (action && action.type !== ASYNC_ACTION_TYPE.type) {
-        if (hasListener) {
-          const ret = listener(action);
-          if (ret !== false) {
-            return next(action);
-          }
-        } else {
+        if (listener(action) !== false) {
           return next(action);
         }
       }

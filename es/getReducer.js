@@ -43,7 +43,7 @@ function getReducer(model) {
     if (model[actionName].length <= 2) {
       // support Flux Standard Action
       actions[actionName] = function (payload, error, meta) {
-        return { type: type, payload: payload, error: error, meta: meta };
+        return dispatch({ type: type, payload: payload, error: error, meta: meta });
       };
     } else {
       actions[actionName] = function () {

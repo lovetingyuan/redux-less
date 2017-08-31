@@ -2842,8 +2842,11 @@ function warning() {
 var dispatch = warning; // eslint-disable-line import/no-mutable-exports
 var getState = warning; // eslint-disable-line import/no-mutable-exports
 
-function reduxLessMiddlewareWithListener(listener) {
-  var hasListener = typeof listener === 'function';
+function reduxLessMiddlewareWithListener() {
+  var listener = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {
+    return true;
+  };
+
   return function (_ref) {
     var a = _ref.dispatch,
         b = _ref.getState;
@@ -2853,12 +2856,7 @@ function reduxLessMiddlewareWithListener(listener) {
     return function (next) {
       return function (action) {
         if (action && action.type !== ASYNC_ACTION_TYPE.type) {
-          if (hasListener) {
-            var ret = listener(action);
-            if (ret !== false) {
-              return next(action);
-            }
-          } else {
+          if (listener(action) !== false) {
             return next(action);
           }
         }
@@ -2909,7 +2907,7 @@ function getReducer(model) {
     if (model[actionName].length <= 2) {
       // support Flux Standard Action
       actions[actionName] = function (payload, error, meta) {
-        return { type: type, payload: payload, error: error, meta: meta };
+        return dispatch({ type: type, payload: payload, error: error, meta: meta });
       };
     } else {
       actions[actionName] = function () {

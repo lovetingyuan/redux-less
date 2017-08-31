@@ -36,7 +36,7 @@ function getReducer(model) {
     const type = stateKey + SPLIT + actionName;
     if (model[actionName].length <= 2) {
       // support Flux Standard Action
-      actions[actionName] = (payload, error, meta) => ({ type, payload, error, meta });
+      actions[actionName] = (payload, error, meta) => dispatch({ type, payload, error, meta });
     } else {
       actions[actionName] = (...args) => {
         model[actionName](
