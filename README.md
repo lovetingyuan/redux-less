@@ -2,7 +2,7 @@
 
 write a redux reducer with less code, inspired by [mirror](https://github.com/mirrorjs/mirror)
 
-### example
+### example [online](https://jsfiddle.net/tingyuan/q0ehjo2r/)
 
 ```javascript
 import { getReducer, reduxLessMiddleware } from 'redux-less';
@@ -49,7 +49,6 @@ export default connect(state => ({
 
 ```
 
-[online example](https://jsfiddle.net/tingyuan/q0ehjo2r/)
 
 ### license
 MIT
