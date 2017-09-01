@@ -1,6 +1,8 @@
 ## redux-less
 write a redux reducer with less code, inspired by [mirror](https://github.com/mirrorjs/mirror)
 
+just reduce boilerplates code on creating actionCreators and reducers
+
 ### install
 `npm install redux-less`
 
