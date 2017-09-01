@@ -1,6 +1,8 @@
 ## redux-less
-
 write a redux reducer with less code, inspired by [mirror](https://github.com/mirrorjs/mirror)
+
+### install
+`npm install redux-less`
 
 ### example [online](https://jsfiddle.net/tingyuan/q0ehjo2r/)
 
@@ -70,14 +72,6 @@ const getReducer = ReduxLess.getReducer
 * `reduxLessMiddleware`
 
   you must apply "reduxLessMiddleware" to your store
-```javascript
-  const store = createStore(
-    rootReducer,
-    initialState,
-    applyMiddleware(reduxLessMiddleware, ...otherMiddlewares),
-  )
-```
-
 * `reduxLessMiddlewareWithListener(listener: function)`
 
   if you want to listen any action, you can call this api   
@@ -85,6 +79,7 @@ const getReducer = ReduxLess.getReducer
   if listener returns false, then the action will not be dispatched    
 ```javascript
   applyMiddleware(reduxLessMiddlewareWithListener(action => {
+    // action is Flux Standard Action, https://github.com/acdlite/flux-standard-action
   }))
 ```
 
