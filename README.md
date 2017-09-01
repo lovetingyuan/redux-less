@@ -60,15 +60,15 @@ import {
   getActionType, 
   reduxLessMiddlewareWithListener 
 } from 'redux-less'
-// or you can use is as below when using an umd version
+// or using an umd version with global namespace: `ReduxLess`
 const getReducer = ReduxLess.getReducer
 ```
 
 * `getReducer(model: object): function`
 
-  get the reducer function, you can see the example above, it is quite clear
-  the model contains `key` as the reducer key and `initialState` as the `state[key]` initial value
-  other properties in model must be reducer function
+  get the reducer function, you can see the example above, it is quite clear   
+  the model contains `key` as the reducer key and `initialState` as the `state[key]` initial value     
+  other properties in model must be reducer function   
 * `reduxLessMiddleware`
 
   you must apply "reduxLessMiddleware" to your store
