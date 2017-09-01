@@ -1,20 +1,16 @@
 {
   "env": {
-    "es": {
+    "commonjs": {
       "presets": [
-        [
-          "env",
-          {
-            "modules": false
-          }
-        ]
+        ["env", {}]
       ]
     },
-    "node": {
+    "es": {
       "presets": [
-        [
-          "env"
-        ]
+        ["env", {
+          "useBuiltIns": true,
+          "modules": false
+        }]
       ]
     }
   }

@@ -1,17 +1,20 @@
 {
   "name": "redux-less",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "write less code with redux",
   "main": "lib/index.js",
   "module": "es/index.js",
+  "jsnext:main": "es/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublish": "npm run build",
-    "prebuild": "npm run lint && rimraf lib es dist",
-    "build:node": "cross-env BABEL_ENV=node babel src -d lib",
+    "clean": "rimraf lib es dist",
+    "prebuild": "npm run clean && npm run lint",
+    "build:commonjs": "cross-env BABEL_ENV=commonjs babel src -d lib",
     "build:es": "cross-env BABEL_ENV=es babel src -d es",
-    "build:rollup": "cross-env BABEL_ENV=es rollup --config",
-    "build": "cross-env NODE_ENV=production npm run build:node&&npm run build:es&&npm run build:rollup",
+    "build:umd": "cross-env BABEL_ENV=es NODE_ENV=development rollup --config",
+    "build:umd:min": "cross-env BABEL_ENV=es NODE_ENV=production rollup --config",
+    "build": "npm run build:commonjs&&npm run build:es&&npm run build:umd&&npm run build:umd:min",
     "lint": "eslint ./src --fix"
   },
   "repository": {
@@ -33,18 +36,17 @@
     "babel-cli": "^6.26.0",
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-preset-env": "^1.6.0",
-    "babili": "^0.1.4",
     "cross-env": "^5.0.5",
     "eslint": "3.19.0",
-    "eslint-config-airbnb": "^15.0.1",
+    "eslint-config-airbnb-base": "^11.3.2",
     "eslint-plugin-import": "2.2.0",
-    "eslint-plugin-jsx-a11y": "5.0.1",
-    "eslint-plugin-react": "7.0.1",
+    "pre-commit": "^1.2.2",
     "rimraf": "^2.6.1",
     "rollup": "^0.49.1",
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-node-resolve": "^3.0.0",
-    "rollup-plugin-replace": "^1.1.1"
+    "rollup-plugin-replace": "^1.1.1",
+    "rollup-plugin-uglify": "^2.0.1"
   },
   "dependencies": {
     "lodash-es": "^4.17.4"
@@ -52,6 +54,10 @@
   "files": [
     "dist",
     "es",
-    "lib"
+    "lib",
+    "src"
+  ],
+  "pre-commit": [
+    "lint"
   ]
 }
