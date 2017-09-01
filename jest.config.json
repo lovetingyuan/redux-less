@@ -1,0 +1,6 @@
+{
+  "notify": true,
+  "coverageDirectory": "test/coverage",
+  "testRegex": "test/.+\\.test\\.js$",
+  "verbose": true
+}

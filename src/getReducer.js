@@ -1,9 +1,10 @@
-import isPlainObject from 'lodash-es/isPlainObject';
+import isPlainObject from 'lodash/isPlainObject';
 import { dispatch, getState } from './middleware';
 import { SPLIT, ASYNC_ACTION_TYPE } from './constants';
 
-// eslint-disable-next-line no-console
-const logError = typeof console === 'object' ? console.error : () => {};
+const logError = (typeof console === 'object' && process.env.NODE_ENV !== 'test')
+  ? console.error // eslint-disable-line no-console
+  : () => {};
 
 /**
  * check the validation of reducer model
@@ -54,7 +55,7 @@ function checkModel(model) {
  * @param {string} actionName is also reducer name
  * @return {string} the action type
  */
-function getActionType(stateKey, actionName) {
+export function getActionType(stateKey, actionName) {
   if (!stateKey || typeof stateKey !== 'string') {
     const error = new Error('you must specify the reducer key');
     logError(error); // eslint-disable-line no-console
@@ -71,7 +72,7 @@ function getActionType(stateKey, actionName) {
  * @param {object} model
  * @return {function} the reducer function
  */
-function getReducer(model) {
+export default function getReducer(model) {
   const { key: stateKey, initialState, reducers } = checkModel(model);
   const actions = {};
   const _getState = (key = stateKey) => getState()[key];
@@ -99,9 +100,3 @@ function getReducer(model) {
   reducer.actions = actions;
   return reducer;
 }
-
-export {
-  getActionType
-};
-
-export default getReducer;
