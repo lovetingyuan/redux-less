@@ -6,6 +6,11 @@ import { SPLIT, ASYNC_ACTION_TYPE } from './constants';
 // eslint-disable-next-line no-console
 const logError = typeof console === 'object' ? console.error : () => {};
 
+/**
+ * check the validation of reducer model
+ * @param {object} model reducer config
+ * @return {object} the checked model
+ */
 function checkModel(model) {
   if (!isPlainObject(model)) {
     const error = new Error(`model ${model} is not a plain object`);
@@ -42,6 +47,12 @@ function checkModel(model) {
   return _model;
 }
 
+/**
+ * get action type by reducer key and reducer function name
+ * @param {string} stateKey is also reducer key
+ * @param {string} actionName is also reducer name
+ * @return {string} the action type
+ */
 function getActionType(stateKey, actionName) {
   if (!stateKey || typeof stateKey !== 'string') {
     const error = new Error('you must specify the reducer key');
@@ -54,6 +65,11 @@ function getActionType(stateKey, actionName) {
   return stateKey + SPLIT + actionName;
 }
 
+/**
+ * get reducer function for a container component
+ * @param {object} model
+ * @return {function} the reducer function
+ */
 function getReducer(model) {
   const { key: stateKey, initialState, reducers } = checkModel(model);
   const actions = {};
@@ -86,4 +102,5 @@ function getReducer(model) {
 export {
   getActionType
 };
+
 export default getReducer;
