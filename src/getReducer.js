@@ -1,5 +1,4 @@
 import isPlainObject from 'lodash-es/isPlainObject';
-import filter from 'lodash-es/filter';
 import { dispatch, getState } from './middleware';
 import { SPLIT, ASYNC_ACTION_TYPE } from './constants';
 
@@ -28,9 +27,11 @@ function checkModel(model) {
     key,
     reducers: {}
   };
-  const reducersName = filter(Object.keys(model), v => v !== 'initialState' && v !== 'key');
+  const reducersName = Object.keys(model);
   for (let i = 0; i < reducersName.length; i++) {
     const name = reducersName[i];
+    // eslint-disable-next-line no-continue
+    if (name === 'key' || name === 'initialState') continue;
     const reducer = model[name];
     if (typeof reducer !== 'function') {
       const error = new Error(`reducer "${name}" at "${model.key}" model must be a function`);
