@@ -49,6 +49,55 @@ export default connect(state => ({
 
 ```
 
+### API
+
+```javascript
+import { 
+  getReducer, 
+  reduxLessMiddleware, 
+  getActionType, 
+  reduxLessMiddlewareWithListener 
+} from 'redux-less'
+// or you can use is as below when using an umd version
+const getReducer = ReduxLess.getReducer
+```
+
+* `getReducer(model: object): function`
+
+  get the reducer function, you can see the example above, it is quite clear
+  the model contains `key` as the reducer key and `initialState` as the `state[key]` initial value
+  other properties in model must be reducer function
+* `reduxLessMiddleware`
+
+  you must apply "reduxLessMiddleware" to your store
+```javascript
+  const store = createStore(
+    rootReducer,
+    initialState,
+    applyMiddleware(reduxLessMiddleware, ...otherMiddlewares),
+  )
+```
+
+* `reduxLessMiddlewareWithListener(listener: function)`
+
+  if you want to listen any action, you can call this api   
+  listener is a function with the action as param    
+  if listener returns false, then the action will not be dispatched    
+```javascript
+  applyMiddleware(reduxLessMiddlewareWithListener(action => {
+  }))
+```
+
+* `getActionType(reducerKey: string, reducerName: string): string`
+
+  get the action.type by reducer key and reducer function name
+```javascript
+  reduxLessMiddlewareWithListener(action => {
+    if (getActionType('todo', 'addItem') === action.type) {
+      if (!action.payload) return false
+    }
+  })
+```  
 
 ### license
 MIT
