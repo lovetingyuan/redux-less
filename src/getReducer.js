@@ -20,7 +20,7 @@ function checkModel(model) {
   const key = model.key;
   if (!key || typeof key !== 'string' || key.indexOf(SPLIT) !== -1) {
     const error = new Error(`state key:"${key}" must be a string and can not contain "${SPLIT}"`);
-    logError(error); // eslint-disable-line no-console
+    logError(error);
     throw error;
   }
   const _model = {
@@ -36,12 +36,12 @@ function checkModel(model) {
     const reducer = model[name];
     if (typeof reducer !== 'function') {
       const error = new Error(`reducer "${name}" at "${model.key}" model must be a function`);
-      logError(error); // eslint-disable-line no-console
+      logError(error);
       throw error;
     }
     if (name.indexOf(SPLIT) !== -1) {
       const error = new Error(`reducer "${name}" at "${model.key}" can not contain "${SPLIT}"`);
-      logError(error); // eslint-disable-line no-console
+      logError(error);
       throw error;
     }
     _model.reducers[name] = reducer;
@@ -58,7 +58,7 @@ function checkModel(model) {
 export function getActionType(stateKey, actionName) {
   if (!stateKey || typeof stateKey !== 'string') {
     const error = new Error('you must specify the reducer key');
-    logError(error); // eslint-disable-line no-console
+    logError(error);
     throw error;
   }
   if (!actionName || typeof stateKey !== 'string') {
