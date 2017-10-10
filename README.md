@@ -4,7 +4,11 @@ write a redux reducer with less code, inspired by [mirror](https://github.com/mi
 just reduce boilerplates code on creating actionCreators and reducers
 
 ### install
-`npm install redux-less`
+`npm install redux-less`    
+
+or use an umd build version with global namespace: `window.ReduxLess`    
+
+`<script src="https://unpkg.com/redux-less/dist/ReduxLess.min.js"></script>`
 
 ### example [online](https://jsfiddle.net/tingyuan/q0ehjo2r/)
 
@@ -62,8 +66,6 @@ import {
   getActionType, 
   reduxLessMiddlewareWithListener 
 } from 'redux-less'
-// or using an umd version with global namespace: `ReduxLess`
-const getReducer = ReduxLess.getReducer
 ```
 
 * `getReducer(model: object): function`
